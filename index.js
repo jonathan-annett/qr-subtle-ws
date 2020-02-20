@@ -37,9 +37,9 @@ function browser(window,awaitPastedData) {
             ws.onmessage = function (evt) {
                var payload = JSON.parse(evt.data);
                
-               if (payload.code && payload.publicKey) {
-                   lib.cryptoWindow.decrypt(payload.code,function(err,decrypted){
-                       console.log({payload,err,decrypted});
+               if (payload.connect) {
+                   lib.cryptoWindow.decrypt_obj(payload.connect,function(err,connectObj){
+                       console({err,connectObj});
                    });
                } else {
                   console.log({payload});
@@ -150,14 +150,14 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                               }
                               code = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('').substr(-24);
                                    
-                              lib.cryptoWindow.encrypt(code,function(err,ecryptedCode){
+                              lib.cryptoWindow.encrypt_obj({publicKey:publicExported,code:code},function(err,ecryptedCode){
                                  
                                     if (err) {
                                         return console.log(err);
                                     }
-                                    console.log(getQrCodeSmall(publicExported.n.substr(16,12))); 
+                                    console.log(getQrCodeSmall(code)); 
                                     
-                                    ws.send(JSON.stringify({publicKey:publicExported ,code:Array.from(ecryptedCode)}));
+                                    ws.send(JSON.stringify({connect:Array.from(ecryptedCode)}));
                                   
                               });
 
