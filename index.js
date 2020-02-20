@@ -144,14 +144,14 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                               }
                               code = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('').substr(-24);
                                    
-                              lib.cryptoWindow.encrypt(JSON.stringify({public:publicExported,code}),function(err,connectPackage){
+                              lib.cryptoWindow.encrypt(code,function(err,ecryptedCode){
                                  
                                     if (err) {
                                         return console.log(err);
                                     }
                                     console.log(getQrCodeSmall(publicExported.n.substr(16,12))); 
                                     
-                                    ws.send(JSON.stringify({connect:Array.from(connectPackage)}));
+                                    ws.send(JSON.stringify({publicKey:publicExported ,code:Array.from(ecryptedCode)}));
                                   
                               });
 
