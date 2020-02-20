@@ -157,7 +157,7 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                                     }
                                     console.log(getQrCodeSmall(code)); 
                                     
-                                    ws.send(JSON.stringify({connect:Array.from(ecryptedCode)}));
+                                    ws.send(JSON.stringify({connect:ecryptedCode}));
                                   
                               });
 
