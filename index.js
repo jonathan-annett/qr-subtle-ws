@@ -64,6 +64,7 @@ function browser(window,awaitPastedData) {
                                      ws.send(JSON.stringify({connect:ecryptedCode}));
                                    
                                });
+                               
                            });
                            
                        });
