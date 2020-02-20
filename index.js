@@ -233,7 +233,7 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                   return ;
               }
               lines.push(line);
-              if (checkPastedQR(line,code)||checkPastedQR(lines.join("\n"),code)) {
+              if (checkPastedQR(line,consoleCode)||checkPastedQR(lines.join("\n"),consoleCode)) {
                  // validated = true;
                   clearConsoleAndScrollbackBuffer();
                   lines=[];
