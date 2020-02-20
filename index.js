@@ -36,7 +36,14 @@ function browser(window,awaitPastedData) {
         
             ws.onmessage = function (evt) {
                var payload = JSON.parse(evt.data);
-               console.log({payload});
+               
+               if (payload.code && payload.publicKey) {
+                   lib.cryptoWindow.decrypt(payload.code,function(err,decrypted){
+                       console.log({payload,err,decrypted});
+                   });
+               } else {
+                  console.log({payload});
+               }
                
             };
         
@@ -137,7 +144,6 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                           if (err) {
                               return console.log(err);
                           }
-                          debugger;
                           lib.cryptoWindow.importPublic (payload.public,true,function(err,publicImported){
                               if (err) {
                                   return console.log(err);
