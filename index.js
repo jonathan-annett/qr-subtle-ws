@@ -55,7 +55,7 @@ function browser(window,awaitPastedData) {
                            
                            awaitPastedData(button_id,div_id,function(data){
                                
-                               lib.cryptoWindow.encrypt_obj({pastedData:data,code:connectObj.code},function(err,ecryptedCode){
+                               lib.cryptoWindow.encrypt_obj({hello:"world"},function(err,ecryptedCode){
                                   
                                      if (err) {
                                          return console.log(err);
@@ -163,8 +163,10 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                       if (err) {
                           return console.log(err);
                           
-                          console.log({payload});
                       }
+                      
+                      console.log({payload});
+
                       
                   });
                   
