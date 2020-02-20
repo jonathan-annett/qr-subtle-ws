@@ -23,6 +23,11 @@ function browser(window,awaitPastedData) {
     ws,
     booting=true;
     
+    var 
+    button_id ="click_here" ,
+    div_id="paste_here";
+    
+    
     function connect( ) {
         
             lib.cryptoWindow.generateKeys(true,function(err,keyPairs,publicExported){
@@ -39,7 +44,30 @@ function browser(window,awaitPastedData) {
                
                if (payload.connect) {
                    lib.cryptoWindow.decrypt_obj(payload.connect,function(err,connectObj){
-                       console.log({err,connectObj});
+                       if (err) {
+                           return console.log(err);
+                       }
+                       lib.cryptoWindow.importPublic(connectObj.publicKey,true,function(err){
+                           if (err) {
+                               return console.log(err);
+                           }
+                           document.getElementById(div_id).innerHTML="Copy the code from the terminal window and paste it in here";
+                           
+                           awaitPastedData(button_id,div_id,function(data){
+                               
+                               lib.cryptoWindow.encrypt_obj({pastedData:data,code:connectObj.code},function(err,ecryptedCode){
+                                  
+                                     if (err) {
+                                         return console.log(err);
+                                     }
+
+                                     ws.send(JSON.stringify({connect:ecryptedCode}));
+                                   
+                               });
+                           });
+                           
+                       });
+
                    });
                } else {
                   console.log({payload});
@@ -61,10 +89,7 @@ function browser(window,awaitPastedData) {
       
     }
     
-    var button_id ="click_here" ,div_id="paste_here";
-    awaitPastedData(button_id,div_id,function(data){
-        ws.send(JSON.stringify({pastedData:data}));
-    });
+    
     
 
     setTimeout(connect,500);
@@ -126,13 +151,26 @@ function nodeJS(err,child,app,port,url,npmrequire) {
     function onNewWebSocket(ws) {
         
           console.log("new web socket");
-          var code;
+          var consoleCode,browserCode;
           ws.on('message', function(msg) {
               var payload = JSON.parse(msg);
               
-              if (payload.pastedData && checkPastedQR(payload.pastedData,code) ) {
+              if (payload.connect){
+                  
+                  console.log("decrypting:",payload.connect);
+                  
+                  lib.cryptoWindow.decrypt_obj(payload.connect,function(err,connectObj){
+                      if (err) {
+                          return console.log(err);
+                          
+                          console.log({payload});
+                      }
+                      
+                  });
+                  
+//              } && checkPastedQR(payload.pastedData,consoleCode) ) {
               
-                 console.log({payload});
+               
                  
               } else {
                   
@@ -148,14 +186,14 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                               if (err) {
                                   return console.log(err);
                               }
-                              code = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('').substr(-24);
-                                   
-                              lib.cryptoWindow.encrypt_obj({publicKey:publicExported,code:code},function(err,ecryptedCode){
+                              consoleCode = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('').substr(-24);
+                              browserCode = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('');    
+                              lib.cryptoWindow.encrypt_obj({publicKey:publicExported,code:browserCode},function(err,ecryptedCode){
                                  
                                     if (err) {
                                         return console.log(err);
                                     }
-                                    console.log(getQrCodeSmall(code)); 
+                                    console.log(getQrCodeSmall(consoleCode)); 
                                     
                                     ws.send(JSON.stringify({connect:ecryptedCode}));
                                   
