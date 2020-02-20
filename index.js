@@ -39,7 +39,7 @@ function browser(window,awaitPastedData) {
                
                if (payload.connect) {
                    lib.cryptoWindow.decrypt_obj(payload.connect,function(err,connectObj){
-                       console({err,connectObj});
+                       console.log({err,connectObj});
                    });
                } else {
                   console.log({payload});
