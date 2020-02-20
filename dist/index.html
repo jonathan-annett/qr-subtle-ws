@@ -1,0 +1,69 @@
+
+<html>
+    <head>
+        <script src="qrcode-val-browser.js"></script>
+        <script src="subtle-crypto-window.js"></script>
+    </head>
+    
+    <body>
+        <div id="paste_here">
+            paste into here
+        </div>
+        <button id="click_here">Paste</button>
+        
+        <script>
+            
+    
+    var
+    lib=window.cryptoWindow(false),
+    ws,
+    booting=true;
+    
+    function connect( ) {
+        
+            lib.cryptoWindow.generateKeys(true,function(err,keyPairs,publicExported){
+            
+            ws = new WebSocket("ws://" + location.host + "/");
+        
+            ws.onopen = function() {
+                console.log("socket connected");
+                ws.send(JSON.stringify({public:publicExported}));
+            };
+        
+            ws.onmessage = function (evt) {
+               var payload = JSON.parse(evt.data);
+               console.log({payload});
+               
+            };
+        
+            ws.onclose = function() {
+                
+                if (booting) {
+                    console.log("reconnecting");
+                    setTimeout(connect,500);
+                } else {
+                    console.log("socket closed");
+                }
+        
+            };
+        });
+      
+    }
+    
+    var button_id ="click_here" ,div_id="paste_here";
+    awaitPastedData(button_id,div_id,function(data){
+        ws.send(JSON.stringify({pastedData:data}));
+    });
+    
+
+    setTimeout(connect,500);
+    
+    
+
+
+    console.log("in the module");    
+
+
+        </script>
+    </body>
+</html>
