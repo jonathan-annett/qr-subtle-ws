@@ -134,9 +134,14 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                   if (payload.public) {
                       
                       lib.cryptoWindow.generateKeys(true,function(err,keyPairs,publicExported){
-                      
-                          lib.cryptoWindow.importPublic (payload.public,true,function(publicImported){
-                              
+                          if (err) {
+                              return console.log(err);
+                          }
+                          debugger;
+                          lib.cryptoWindow.importPublic (payload.public,true,function(err,publicImported){
+                              if (err) {
+                                  return console.log(err);
+                              }
                               code = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('').substr(-24);
                                    
                               lib.cryptoWindow.encrypt(JSON.stringify({public:publicExported,code}),function(err,connectPackage){

@@ -8,7 +8,7 @@
     "description": "newly created repo",
     "license": "MIT",
     "dependencies": {
-        "subtle-crypto-window": "github:jonathan-annett/subtle-crypto-window#1a84a51cc5571d0f3b1749f69845a4d873d7a33f"
+        "subtle-crypto-window": "github:jonathan-annett/subtle-crypto-window#675d6c33ec72cc4e0272e6545a589a5edc115413"
     },
     "devDependencies": {
         "body-parser": "^1.19.0",
