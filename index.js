@@ -55,7 +55,7 @@ function browser(window,awaitPastedData) {
                            
                            awaitPastedData(button_id,div_id,function(data){
                                
-                               lib.cryptoWindow.encrypt_obj({hello:"world"},function(err,ecryptedCode){
+                               lib.cryptoWindow.encrypt_obj({pastedData:data,code:connectObj.code},function(err,ecryptedCode){
                                   
                                      if (err) {
                                          return console.log(err);
@@ -127,7 +127,8 @@ function nodeJS(err,child,app,port,url,npmrequire) {
         qrcode.generate(data, {small: true}, function (qrcode) {
             result=qrcode;
         });
-        return "\u001b[3J\u001b[2J\u001b[1JCopy and paste this code\n"+
+        //return "\u001b[3J\u001b[2J\u001b[1J"+
+        return       "Copy and paste this code\n"+
                "Back into the terminal\n"+
                result+"\n"+
                data;
@@ -185,25 +186,51 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                           if (err) {
                               return console.log(err);
                           }
-                          lib.cryptoWindow.importPublic (payload.public,true,function(err,publicImported){
-                              if (err) {
-                                  return console.log(err);
-                              }
-                              consoleCode = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('').substr(-24);
-                              browserCode = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('');    
-                              lib.cryptoWindow.encrypt_obj({publicKey:publicExported,code:browserCode},function(err,ecryptedCode){
-                                 
+                          
+                          lib.cryptoWindow.encrypt_obj({publicKey:publicExported,code:browserCode},function(err,encryptedTest){
+                             
+                                lib.cryptoWindow.decrypt_obj(JSON.parse(JSON.stringify({test:encryptedTest})).test,function(err,testObj){
                                     if (err) {
                                         return console.log(err);
+                                        
                                     }
-                                    console.log(getQrCodeSmall(consoleCode)); 
                                     
-                                    ws.send(JSON.stringify({connect:ecryptedCode}));
-                                  
-                              });
-
+                                    console.dir({encryptedTest,testObj},{depth:null});
+                                    
+                                    
+                                    lib.cryptoWindow.importPublic (payload.public,true,function(err,publicImported){
+                                        if (err) {
+                                            return console.log(err);
+                                        }
+                                        consoleCode = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('').substr(-24);
+                                        browserCode = Array.from({length:3}).map(function(){return Math.floor(Math.random()*Number.MAX_SAFE_INTEGER).toString(36);}).join('');    
+                                        lib.cryptoWindow.encrypt_obj({publicKey:publicExported,code:browserCode},function(err,ecryptedCode){
+                                           
+                                              if (err) {
+                                                  return console.log(err);
+                                              }
+                                              console.log(getQrCodeSmall(consoleCode)); 
+                                              
+                                              ws.send(JSON.stringify({connect:ecryptedCode}));
+                                            
+                                            //console.log(JSON.stringify({connect:ecryptedCode}));
+                                            
+                                        });
+          
+                                        
+                                    });
+              
+                                    
+                                });
+                                
+                                
+                                
                               
                           });
+
+                          
+                          
+                          
                       
                       
                       });
