@@ -188,7 +188,10 @@ function nodeJS(err,child,app,port,url,npmrequire) {
                           }
                           
                           lib.cryptoWindow.encrypt_obj({publicKey:publicExported,code:browserCode},function(err,encryptedTest){
-                             
+                                 if (err) {
+                                     return console.log(err);
+                                     
+                                 }
                                 lib.cryptoWindow.decrypt_obj(JSON.parse(JSON.stringify({test:encryptedTest})).test,function(err,testObj){
                                     if (err) {
                                         return console.log(err);
